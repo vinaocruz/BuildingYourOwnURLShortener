@@ -1,4 +1,7 @@
 <?php
+
+namespace App;
+
 /**
  * This class provides all of the functionality needed to create (encode) and
  * decode shortened URLs.
@@ -46,7 +49,7 @@ class ShortUrl
      *  
      * @param PDO $pdo a reference to the PDO database connection object
      */
-    public function __construct(PDO $pdo) {
+    public function __construct(\PDO $pdo) {
         $this->pdo = $pdo;
         $this->timestamp = $_SERVER["REQUEST_TIME"];
     }
