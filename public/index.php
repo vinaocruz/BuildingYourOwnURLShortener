@@ -14,13 +14,13 @@ require __DIR__ . '/../src/dependencies.php';
 $app->post('/url', function (Request $request, Response $response) {
     $args = $request->getParsedBody();
 
-    try{
+    try {
         $shortUrl = new \App\ShortUrl($this->db);
         $code = $shortUrl->urlToShortCode($args['url']);
-        $response->getBody()->write("code:" . $code);
-        return $response;
-    } catch (\Exception $e) {
 
+        return $response->withJson(['code' => $code]);
+    } catch (\Exception $e) {
+        return $response->withJson(['error' => $e->getMessage()], 500);
     }
 });
 
@@ -28,17 +28,14 @@ $app->post('/url', function (Request $request, Response $response) {
 $app->get('/{code}', function (Request $request, Response $response) {
     $code = $request->getAttribute('code');
 
-    try{
+    try {
         $shortUrl = new \App\ShortUrl($this->db);
         $url = $shortUrl->shortCodeToUrl($code);
+
+        return $response->withHeader('Location', $url);
     } catch (\Exception $e) {
-        echo $e->getTraceAsString();
-        exit;
+        return $response->withJson(['error' => $e->getMessage()], 500);
     }
-
-    $response->getBody()->write("url: $url");
-
-    return $response;
 });
 
 $app->run();
